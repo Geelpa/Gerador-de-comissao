@@ -1,0 +1,123 @@
+/* Container de renderização fora da tela (evita quebrar no html2canvas) */
+#pdfRenderContainer {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 794px; /* Largura A4 padrão em pixels */
+    background: #ffffff;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    line-height: 1.3;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.ixc-header {
+    border-bottom: 2px solid #000000;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+
+.ixc-company-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.ixc-header-grid {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-top: 6px;
+}
+
+.ixc-report-title {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #e5e7eb;
+    padding: 6px;
+    margin: 12px 0 6px 0;
+    border: 1px solid #000000;
+}
+
+/* Tabelas com colunas fixas e quebra controlada */
+.ixc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+    font-size: 9px;
+    table-layout: fixed; /* Evita que o texto empurre a coluna para fora */
+    word-wrap: break-word;
+}
+
+.ixc-table th {
+    border-bottom: 1px solid #000000;
+    border-top: 1px solid #000000;
+    padding: 4px;
+    text-align: left;
+    font-weight: bold;
+    background-color: #f3f4f6;
+}
+
+.ixc-table td {
+    padding: 4px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+/* Evita cortar linhas de tabelas no meio da página do PDF */
+.ixc-table tr {
+    page-break-inside: avoid !important;
+}
+
+.ixc-table thead {
+    display: table-header-group; /* Repete o cabeçalho ao mudar de página */
+}
+
+.ixc-totals-bar {
+    background-color: #f3f4f6;
+    border: 1px solid #000000;
+    font-weight: bold;
+    padding: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    page-break-inside: avoid;
+}
+
+.comissao-box {
+    border: 2px solid #1d4ed8;
+    background-color: #eff6ff;
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+
+.comissao-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #1e40af;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #93c5fd;
+    padding-bottom: 4px;
+}
+
+.signature-section {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    page-break-inside: avoid;
+}
+
+.signature-box {
+    flex: 1;
+    border-top: 1px solid #000000;
+    text-align: center;
+    padding-top: 4px;
+    font-size: 10px;
+}
