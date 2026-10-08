@@ -23,13 +23,6 @@ function calcularComissaoTotal({ dadosVendas, dadosUpgrades, metaAtivacoes }) {
 
     return {
         vendedor: vendedorIdentificado,
-        empresa: 'Vem pra Uno Provedor de Internet LTDA',
-        fone: '(51) 3080-5000',
-        email: 'contato@vemprauno.com.br',
-        endereco: 'Rua Maloha Haussen - Cachoeirinha - RS - 94935-793',
-        cnpj: '31.908.747/0001-76',
-        ie: '1770226130',
-        dataRelatorio: new Date().toLocaleString('pt-BR'),
         resumo: {
             totalAtivacoes,
             totalValorVendas,
