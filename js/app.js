@@ -68,6 +68,18 @@ function atualizarEstadoUpload(input) {
     const arquivoSelecionado = input.files && input.files.length > 0;
     areaUpload.classList.toggle('is-filled', arquivoSelecionado);
     areaUpload.classList.toggle('is-empty', !arquivoSelecionado);
+
+    const statusUpload = areaUpload.querySelector('.app-upload-status');
+    if (statusUpload) {
+        const nomeArquivo = arquivoSelecionado
+            ? input.files[0].name
+            : input.required
+                ? 'Pendente: anexe o relatório de vendas'
+                : 'Opcional: anexe o relatório de upgrades';
+        statusUpload.textContent = arquivoSelecionado ? `Anexado: ${nomeArquivo}` : nomeArquivo;
+        statusUpload.classList.toggle('is-selected', arquivoSelecionado);
+        statusUpload.classList.toggle('is-pending', !arquivoSelecionado);
+    }
 }
 
 function atualizarConfiguracaoPerfil() {

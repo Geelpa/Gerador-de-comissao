@@ -22,6 +22,26 @@
     <div class="app-shell max-w-4xl mx-auto p-8 rounded-lg shadow-lg">
         <h1 class="app-title text-3xl font-bold mb-6 border-b pb-4">Gerador de Comissões</h1>
 
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+            <div>
+                <label for="nomeVendedor" class="block text-sm font-semibold">Nome do vendedor ou funcionário</label>
+                <input type="text" id="nomeVendedor" name="nomeVendedor" autocomplete="name" required
+                    class="app-input mt-1 w-full p-3 border rounded"
+                    placeholder="Informe o nome">
+            </div>
+            <fieldset class="app-rules flex flex-wrap items-center gap-5 p-3 rounded border">
+                <legend class="px-1 text-sm font-semibold">Perfil de comissão</legend>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="perfilComissao" value="vendedor" checked>
+                    <span>Vendedor</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="perfilComissao" value="funcionario">
+                    <span>Funcionário</span>
+                </label>
+            </fieldset>
+        </div>
+
         <!-- Painel de Configurações da Comissão -->
         <div class="app-settings p-4 rounded-md mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 border">
             <div id="metaVendedorConfig">
@@ -66,38 +86,20 @@
             </div>
         </div>
 
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-            <div>
-                <label for="nomeVendedor" class="block text-sm font-semibold">Nome do vendedor ou funcionário</label>
-                <input type="text" id="nomeVendedor" name="nomeVendedor" autocomplete="name" required
-                    class="app-input mt-1 w-full p-3 border rounded"
-                    placeholder="Informe o nome">
-            </div>
-            <fieldset class="app-rules flex flex-wrap items-center gap-5 p-3 rounded border">
-                <legend class="px-1 text-sm font-semibold">Perfil de comissão</legend>
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="perfilComissao" value="vendedor" checked>
-                    <span>Vendedor</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="perfilComissao" value="funcionario">
-                    <span>Funcionário</span>
-                </label>
-            </fieldset>
-        </div>
-
         <!-- Área de Upload dos Ficheiros -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <label for="fileVendas" class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
                 <h3 class="text-lg font-semibold mb-2">1. Relatório de Vendas (Doc 01)</h3>
-                <p class="app-muted text-sm mb-4">Anexe o arquivo (PDF, CSV, TXT, XLS ou XLSX)</p>
-                <input type="file" id="fileVendas" accept=".pdf,.csv,.txt,.xls,.xlsx"
+                <p class="app-muted text-sm mb-3">Relatório necessário para calcular a comissão.</p>
+                <span class="app-upload-status is-pending mb-4" aria-live="polite">Pendente: anexe o relatório de vendas</span>
+                <input type="file" id="fileVendas" accept=".pdf,.csv,.txt,.xls,.xlsx" required
                     class="app-file-input text-sm">
             </label>
 
             <label for="fileUpgrades" class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
                 <h3 class="text-lg font-semibold mb-2">2. Relatório de Upgrades (Doc 02)</h3>
-                <p class="app-muted text-sm mb-4">Anexe o arquivo (PDF, CSV, TXT, XLS ou XLSX)</p>
+                <p class="app-muted text-sm mb-3">Opcional, caso existam upgrades no período.</p>
+                <span class="app-upload-status is-pending mb-4" aria-live="polite">Opcional: anexe o relatório de upgrades</span>
                 <input type="file" id="fileUpgrades" accept=".pdf,.csv,.txt,.xls,.xlsx"
                     class="app-file-input text-sm">
             </label>

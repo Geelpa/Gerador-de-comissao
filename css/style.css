@@ -78,16 +78,18 @@
     display: block;
     border-color: var(--border-color);
     cursor: pointer;
-    transition: background-color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+    transition: background-color 160ms ease, border-color 160ms ease;
 }
 
 .app-upload.is-empty {
-    opacity: 0.58;
+    border-color: rgba(255, 107, 0, 0.65);
+    background: rgba(255, 107, 0, 0.07);
 }
 
 .app-upload.is-empty:hover,
 .app-upload.is-empty:focus-within {
-    opacity: 0.82;
+    border-color: var(--primary);
+    background: rgba(255, 107, 0, 0.12);
 }
 
 .app-upload.is-filled {
@@ -103,6 +105,26 @@
 .app-upload:focus-within {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
+}
+
+.app-upload-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid currentColor;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.app-upload-status.is-pending {
+    color: var(--primary-hover);
+    background: var(--primary-bg);
+}
+
+.app-upload-status.is-selected {
+    color: var(--sucesso);
+    background: var(--sucesso-bg);
 }
 
 .app-file-input {
