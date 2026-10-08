@@ -17,6 +17,7 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
     const vendas = Array.isArray(dadosExportacao.vendas) ? dadosExportacao.vendas : [];
     const upgrades = Array.isArray(dadosExportacao.upgrades) ? dadosExportacao.upgrades : [];
     const resumo = dadosExportacao.resumo || {};
+    const funcionario = dadosExportacao.perfilComissao === 'funcionario';
     const cores = modoImpressao
         ? {
             texto: '#000000',
@@ -36,18 +37,19 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
             bordaLinha: '#ffffff0a',
             fundoSuave: '#1c1612'
         };
-    const fonteBase = modoImpressao ? '12px' : '9.5px';
-    const fonteTabela = modoImpressao ? '12px' : '8.5px';
+    const fonteBase = modoImpressao ? '14px' : '9.5px';
+    const fonteTabela = modoImpressao ? '14px' : '8.5px';
+    const alturaLinha = modoImpressao ? '18px' : '1.3';
     const quebraPagina = modoImpressao ? 'page-break-before: always; break-before: page;' : '';
 
     return `
-        <div id="conteudoRelatorioPDF" style="font-family: Arial, Helvetica, sans-serif; color: ${cores.texto}; padding: ${modoImpressao ? '10px 18px' : '20px 25px'}; font-size: ${fonteBase}; line-height: 1.3; background: ${cores.fundo}; width: 100%; max-width: ${modoImpressao ? '1060px' : '794px'}; box-sizing: border-box; margin: 0 auto; text-align: left;">
+        <div id="conteudoRelatorioPDF" style="font-family: Arial, Helvetica, sans-serif; color: ${cores.texto}; padding: ${modoImpressao ? '10px 18px' : '20px 25px'}; font-size: ${fonteBase}; line-height: ${alturaLinha}; background: ${cores.fundo}; width: 100%; max-width: ${modoImpressao ? '1060px' : '794px'}; box-sizing: border-box; margin: 0 auto; text-align: left;">
             <section>
-                <div style="font-size: ${modoImpressao ? '16px' : '13px'}; font-weight: bold; text-align: center; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
+                <div style="font-size: ${modoImpressao ? '18px' : '13px'}; font-weight: bold; text-align: center; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
                     RELATÓRIO DETALHADO DE VENDAS E ATIVAÇÕES
                 </div>
-                <p style="margin: 8px 0; color: ${cores.destaque};"><strong>Vendedor:</strong> ${escaparHTML(dadosExportacao.vendedor || '')}</p>
-                <div style="font-size: ${modoImpressao ? '14px' : '10.5px'}; text-align: center; margin: 12px 0 6px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 5px; border: 1px solid ${cores.borda};">
+                <p style="margin: 8px 0; color: ${cores.destaque};"><strong>${funcionario ? 'Funcionário' : 'Vendedor'}:</strong> ${escaparHTML(dadosExportacao.vendedor || '')}</p>
+                <div style="font-size: ${modoImpressao ? '16px' : '10.5px'}; text-align: center; margin: 12px 0 6px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 5px; border: 1px solid ${cores.borda};">
                     Vendas e ativações
                 </div>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: ${fonteTabela}; table-layout: fixed;">
@@ -83,7 +85,7 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
             </section>
 
             <section style="${quebraPagina}">
-                <div style="font-size: ${modoImpressao ? '16px' : '13px'}; text-align: center; margin: 0 0 12px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
+                <div style="font-size: ${modoImpressao ? '18px' : '13px'}; text-align: center; margin: 0 0 12px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
                     Relatório detalhado de upgrades
                 </div>
                 ${upgrades.length ? `
@@ -117,7 +119,7 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
             </section>
 
             <section style="${quebraPagina}">
-                <div style="font-size: ${modoImpressao ? '16px' : '13px'}; text-align: center; margin: 0 0 12px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
+                <div style="font-size: ${modoImpressao ? '18px' : '13px'}; text-align: center; margin: 0 0 12px; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
                     Resumo e assinatura
                 </div>
                 <div style="display: flex; justify-content: space-between; gap: 18px; margin: 10px 0 16px; font-size: ${fonteBase};">
@@ -127,31 +129,34 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                     <strong>Diferença Total: ${formatarMoeda(resumo.totalUpgrades)}</strong>
                 </div>
                 <div style="border: 1.5px solid ${cores.borda}; background-color: ${cores.fundoSuave}; padding: 14px 16px; page-break-inside: avoid; break-inside: avoid;">
-                    <div style="font-size: ${modoImpressao ? '14px' : '10.5px'}; font-weight: bold; color: ${cores.destaque}; margin-bottom: 10px; border-bottom: 1px solid ${cores.borda}; padding-bottom: 6px; text-transform: uppercase;">
+                    <div style="font-size: ${modoImpressao ? '16px' : '10.5px'}; font-weight: bold; color: ${cores.destaque}; margin-bottom: 10px; border-bottom: 1px solid ${cores.borda}; padding-bottom: 6px; text-transform: uppercase;">
                         Resumo da Comissão Apurada
                     </div>
                     <table style="width: 100%; font-size: ${fonteBase}; border-collapse: collapse;">
                         <tr>
                             <td style="width: 50%; vertical-align: top;">
-                                <p style="margin: 4px 0;"><strong>Meta Padrão (100%):</strong> ${resumo.metaAtivacoes || 84} ativações</p>
-                                <p style="margin: 4px 0;"><strong>Ativações Realizadas:</strong> ${resumo.totalAtivacoes || 0} contratos</p>
+                                <p style="margin: 4px 0;"><strong>${funcionario ? 'Meta Fixa (100%)' : 'Meta Padrão (100%)'}:</strong> ${resumo.metaAtivacoes || 0} ${funcionario ? 'vendas' : 'ativações'}</p>
+                                <p style="margin: 4px 0;"><strong>${funcionario ? 'Meta Atingida Informada' : 'Ativações Realizadas'}:</strong> ${funcionario ? `${resumo.metaAtingidaFuncionario || 0} vendas` : `${resumo.totalAtivacoes || 0} contratos`}</p>
                                 <p style="margin: 4px 0;"><strong>Percentual de Alcance:</strong> ${resumo.percentualAlcance || 0}%</p>
                             </td>
                             <td style="width: 50%; vertical-align: top; text-align: right;">
-                                <p style="margin: 4px 0;"><strong>Faixa Aplicada:</strong> ${resumo.porcentagemUtilizada || 0}% de comissão</p>
+                                ${funcionario
+                                    ? `<p style="margin: 4px 0;"><strong>Comissão por venda:</strong> ${formatarMoeda(resumo.valorPorVenda)}</p>
+                                       <p style="margin: 4px 0;"><strong>Vendas consideradas:</strong> ${resumo.vendasComissionaveis || 0}</p>`
+                                    : `<p style="margin: 4px 0;"><strong>Faixa Aplicada:</strong> ${resumo.porcentagemUtilizada || 0}% de comissão</p>`}
                                 <p style="margin: 4px 0;"><strong>Comissão Vendas:</strong> ${formatarMoeda(resumo.comissaoVendas)}</p>
                                 <p style="margin: 4px 0;"><strong>Comissão Upgrades:</strong> ${formatarMoeda(resumo.totalUpgrades)}</p>
                             </td>
                         </tr>
                     </table>
-                    <div style="background-color: ${cores.fundo}; padding: 8px 10px; font-size: ${modoImpressao ? '14px' : '10.5px'}; font-weight: bold; text-align: right; color: ${cores.destaque}; margin-top: 10px; border: 1px solid ${cores.borda};">
+                    <div style="background-color: ${cores.fundo}; padding: 8px 10px; font-size: ${modoImpressao ? '16px' : '10.5px'}; font-weight: bold; text-align: right; color: ${cores.destaque}; margin-top: 10px; border: 1px solid ${cores.borda};">
                         VALOR TOTAL A RECEBER: ${formatarMoeda(resumo.comissaoTotal)}
                     </div>
                 </div>
                 <div style="margin-top: 55px; text-align: center; page-break-inside: avoid; break-inside: avoid;">
                     <div style="width: 360px; max-width: 80%; margin: 0 auto; border-top: 1px solid ${cores.borda}; padding-top: 8px; font-size: ${fonteBase};">
                         <strong>Assinatura do Vendedor / Funcionário</strong><br>
-                        <span style="font-size: ${modoImpressao ? '12px' : '8.5px'}; color: ${modoImpressao ? '#000000' : '#9c8e85'};">(Termo de Ciência da Comissão)</span>
+                        <span style="font-size: ${modoImpressao ? '14px' : '8.5px'}; color: ${modoImpressao ? '#000000' : '#9c8e85'};">(Termo de Ciência da Comissão)</span>
                     </div>
                 </div>
             </section>

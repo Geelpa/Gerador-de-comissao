@@ -1,14 +1,23 @@
-function calcularComissaoTotal({ dadosVendas, dadosUpgrades, metaAtivacoes }) {
+function calcularComissaoTotal({
+    dadosVendas,
+    dadosUpgrades,
+    metaAtivacoes,
+    perfilComissao = 'vendedor',
+    metaAtingidaFuncionario = 0
+}) {
     const totalAtivacoes = dadosVendas.totalAtivacoes;
     const totalValorVendas = dadosVendas.totalValor;
     const totalUpgradesPositivos = dadosUpgrades.totalDiferenca;
+    const funcionario = perfilComissao === 'funcionario';
 
-    // Cálculo da porcentagem de alcance da meta
-    const percentualAlcance = metaAtivacoes > 0 ? (totalAtivacoes / metaAtivacoes) * 100 : 0;
-    
-    // Regra dos 3 níveis de comissão
-    let porcentagemEfetiva = 3;
-    if (percentualAlcance >= 100) {
+    const quantidadeMetaAtingida = funcionario ? metaAtingidaFuncionario : totalAtivacoes;
+    const percentualAlcance = metaAtivacoes > 0 ? (quantidadeMetaAtingida / metaAtivacoes) * 100 : 0;
+    let porcentagemEfetiva = null;
+    let valorPorVenda = null;
+
+    if (funcionario) {
+        valorPorVenda = percentualAlcance > 80 ? 12 : percentualAlcance > 60 ? 10 : 7;
+    } else if (percentualAlcance >= 100) {
         porcentagemEfetiva = 7;
     } else if (percentualAlcance >= 80) {
         porcentagemEfetiva = 5;
@@ -16,7 +25,14 @@ function calcularComissaoTotal({ dadosVendas, dadosUpgrades, metaAtivacoes }) {
         porcentagemEfetiva = 3;
     }
 
-    const comissaoVendas = totalValorVendas * (porcentagemEfetiva / 100);
+    const vendasComissionaveis = funcionario
+        ? (Array.isArray(dadosVendas.lista) && dadosVendas.lista.length
+            ? dadosVendas.lista.length
+            : totalAtivacoes)
+        : totalAtivacoes;
+    const comissaoVendas = funcionario
+        ? vendasComissionaveis * valorPorVenda
+        : totalValorVendas * (porcentagemEfetiva / 100);
     const comissaoTotal = comissaoVendas + totalUpgradesPositivos;
 
     const vendedorIdentificado = dadosVendas.vendedor || dadosUpgrades.vendedor || 'Vendedor Não Identificado';
@@ -30,9 +46,13 @@ function calcularComissaoTotal({ dadosVendas, dadosUpgrades, metaAtivacoes }) {
             comissaoVendas,
             comissaoTotal,
             metaAtivacoes,
+            metaAtingidaFuncionario: funcionario ? metaAtingidaFuncionario : null,
             percentualAlcance: percentualAlcance.toFixed(1),
-            porcentagemUtilizada: porcentagemEfetiva
+            porcentagemUtilizada: porcentagemEfetiva,
+            valorPorVenda,
+            vendasComissionaveis
         },
+        perfilComissao,
         vendas: dadosVendas.lista,
         upgrades: dadosUpgrades.lista
     };

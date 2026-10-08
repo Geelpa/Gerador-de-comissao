@@ -75,11 +75,34 @@
 }
 
 .app-upload {
+    display: block;
     border-color: var(--border-color);
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+}
+
+.app-upload.is-empty {
+    opacity: 0.58;
+}
+
+.app-upload.is-empty:hover,
+.app-upload.is-empty:focus-within {
+    opacity: 0.82;
+}
+
+.app-upload.is-filled {
+    opacity: 1;
+    border-color: var(--primary);
+    background: var(--primary-bg);
 }
 
 .app-upload:hover {
     background: var(--surface-hover);
+}
+
+.app-upload:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
 .app-file-input {

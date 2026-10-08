@@ -9,6 +9,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnProcessar = document.getElementById('btnProcessar');
     const btnDownload = document.getElementById('btnDownload');
     const btnExpandirPrevia = document.getElementById('btnExpandirPrevia');
+    const perfilComissaoRadios = document.querySelectorAll('input[name="perfilComissao"]');
+    const inputsUpload = [inputVendas, inputUpgrades].filter(Boolean);
+
+    inputsUpload.forEach(input => {
+        atualizarEstadoUpload(input);
+        input.addEventListener('change', () => atualizarEstadoUpload(input));
+    });
+
+    perfilComissaoRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            atualizarConfiguracaoPerfil();
+            estadoApp = {};
+            const areaResultados = document.getElementById('areaResultados');
+            if (areaResultados) areaResultados.classList.add('hidden');
+        });
+    });
+    atualizarConfiguracaoPerfil();
 
     if (btnExpandirPrevia) {
         btnExpandirPrevia.addEventListener('click', () => {
@@ -22,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Captura do Relatório de Vendas (Doc 01)
     if (inputVendas) {
         inputVendas.addEventListener('change', (e) => {
-            if (e.target.files[0]) arquivosUpload[0] = e.target.files[0];
+            arquivosUpload[0] = e.target.files[0] || null;
         });
     }
 
     // Captura do Relatório de Upgrades (Doc 02)
     if (inputUpgrades) {
         inputUpgrades.addEventListener('change', (e) => {
-            if (e.target.files[0]) arquivosUpload[1] = e.target.files[0];
+            arquivosUpload[1] = e.target.files[0] || null;
         });
     }
 
@@ -44,15 +61,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function atualizarEstadoUpload(input) {
+    const areaUpload = input.closest('.app-upload');
+    if (!areaUpload) return;
+
+    const arquivoSelecionado = input.files && input.files.length > 0;
+    areaUpload.classList.toggle('is-filled', arquivoSelecionado);
+    areaUpload.classList.toggle('is-empty', !arquivoSelecionado);
+}
+
+function atualizarConfiguracaoPerfil() {
+    const perfil = document.querySelector('input[name="perfilComissao"]:checked')?.value || 'vendedor';
+    const funcionario = perfil === 'funcionario';
+    const metaVendedorConfig = document.getElementById('metaVendedorConfig');
+    const regrasVendedor = document.getElementById('regrasVendedor');
+    const configFuncionario = document.getElementById('configFuncionario');
+    const labelComissao = document.getElementById('labelComissaoCalculada');
+    const ajudaComissao = document.getElementById('ajudaComissaoCalculada');
+    const comissaoCalculada = document.getElementById('comissaoPorcentagem');
+
+    if (metaVendedorConfig) metaVendedorConfig.classList.toggle('hidden', funcionario);
+    if (regrasVendedor) regrasVendedor.classList.toggle('hidden', funcionario);
+    if (configFuncionario) configFuncionario.classList.toggle('hidden', !funcionario);
+    if (labelComissao) labelComissao.textContent = funcionario ? 'Comissão por venda' : 'Comissão Calculada';
+    if (ajudaComissao) {
+        ajudaComissao.textContent = funcionario
+            ? 'Valor definido pelo percentual da meta atingida.'
+            : 'Calculado automaticamente via faixas (3%, 5%, 7%).';
+    }
+    if (comissaoCalculada) comissaoCalculada.value = 'A definir';
+}
+
 async function processarDocumentos() {
     const inputVendas = document.getElementById('fileVendas');
     const inputUpgrades = document.getElementById('fileUpgrades');
     const inputVendedor = document.getElementById('nomeVendedor');
     const nomeVendedor = inputVendedor ? inputVendedor.value.trim() : '';
+    const perfilComissao = document.querySelector('input[name="perfilComissao"]:checked')?.value || 'vendedor';
+
+    let metaDefinida;
+    let metaAtingidaFuncionario = 0;
+    if (perfilComissao === 'funcionario') {
+        const inputMetaFixa = document.getElementById('metaFixaFuncionario');
+        const inputMetaAtingida = document.getElementById('metaAtingidaFuncionario');
+        metaDefinida = Number(inputMetaFixa?.value);
+        metaAtingidaFuncionario = Number(inputMetaAtingida?.value);
+
+        if (!Number.isFinite(metaDefinida) || metaDefinida <= 0) {
+            inputMetaFixa.setCustomValidity('Informe uma meta fixa maior que zero.');
+            inputMetaFixa.reportValidity();
+            inputMetaFixa.focus();
+            return;
+        }
+        inputMetaFixa.setCustomValidity('');
+
+        if (!inputMetaAtingida.value || !Number.isInteger(metaAtingidaFuncionario) || metaAtingidaFuncionario < 0) {
+            inputMetaAtingida.setCustomValidity('Informe a quantidade de vendas atingida como um número inteiro igual ou maior que zero.');
+            inputMetaAtingida.reportValidity();
+            inputMetaAtingida.focus();
+            return;
+        }
+        inputMetaAtingida.setCustomValidity('');
+    } else {
+        const elMeta = document.getElementById('metaAtivacoes');
+        metaDefinida = elMeta ? Number(elMeta.value) : NaN;
+        if (!Number.isFinite(metaDefinida) || metaDefinida <= 0) {
+            elMeta.setCustomValidity('Informe a meta de ativações do vendedor, maior que zero.');
+            elMeta.reportValidity();
+            elMeta.focus();
+            return;
+        }
+        elMeta.setCustomValidity('');
+    }
 
     if (!nomeVendedor) {
         if (inputVendedor) {
-            inputVendedor.setCustomValidity('Informe o nome do vendedor para continuar.');
+            inputVendedor.setCustomValidity('Informe o nome do vendedor ou funcionário para continuar.');
             inputVendedor.reportValidity();
             inputVendedor.focus();
         }
@@ -80,10 +164,6 @@ async function processarDocumentos() {
             ? await extrairDadosDoc02(arq02)
             : { vendedor: '', totalDiferenca: 0, upgrades: [] };
 
-        // 4. Leitura da Meta configurada na tela
-        const elMeta = document.getElementById('metaAtivacoes');
-        const metaDefinida = elMeta ? (parseInt(elMeta.value, 10) || 84) : 84;
-
         // 5. Cálculo do Resumo
         const resultadoCalculo = calcularComissaoTotal({
             dadosVendas: {
@@ -95,20 +175,25 @@ async function processarDocumentos() {
                 ...dadosBrutosDoc02,
                 lista: dadosBrutosDoc02.upgrades
             },
-            metaAtivacoes: metaDefinida
+            metaAtivacoes: metaDefinida,
+            perfilComissao,
+            metaAtingidaFuncionario
         });
         const resumoCalculado = resultadoCalculo.resumo;
 
         // 6. Atualização da Porcentagem Calculada no painel de configurações
         const elPorcentagem = document.getElementById('comissaoPorcentagem');
-        if (elPorcentagem && resumoCalculado.porcentagemUtilizada !== undefined) {
-            elPorcentagem.value = resumoCalculado.porcentagemUtilizada;
+        if (elPorcentagem) {
+            elPorcentagem.value = perfilComissao === 'funcionario'
+                ? `R$ ${resumoCalculado.valorPorVenda.toFixed(2).replace('.', ',')} por venda`
+                : `${resumoCalculado.porcentagemUtilizada}%`;
         }
 
         // 7. Objeto Global da Aplicação
         estadoApp = {
             ...resultadoCalculo,
             vendedor: nomeVendedor,
+            perfilComissao,
             arquivosAnexados: arquivosUpload
         };
 

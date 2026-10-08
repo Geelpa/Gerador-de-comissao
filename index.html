@@ -24,51 +24,83 @@
 
         <!-- Painel de Configurações da Comissão -->
         <div class="app-settings p-4 rounded-md mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 border">
-            <div>
+            <div id="metaVendedorConfig">
                 <label for="metaAtivacoes" class="block text-sm font-semibold">Meta de Ativações
                     (100%)</label>
-                <input type="number" id="metaAtivacoes" value="84"
+                <input type="number" id="metaAtivacoes" min="1" required
                     class="app-input mt-1 w-full p-2 border rounded font-bold">
+                <span class="app-muted text-[10px]">Informe a meta individual do vendedor.</span>
             </div>
             <div>
-                <label for="comissaoPorcentagem" class="block text-sm font-semibold">Comissão Calculada
-                    (%)</label>
-                <input type="number" id="comissaoPorcentagem" value="7" step="0.1"
+                <label for="comissaoPorcentagem" id="labelComissaoCalculada" class="block text-sm font-semibold">Comissão Calculada</label>
+                <input type="text" id="comissaoPorcentagem" value="A definir"
                     class="app-rate mt-1 w-full p-2 border rounded font-bold"
-                    readonly>
-                <span class="app-muted text-[10px]">Calculado automaticamente via Faixas (3%, 5%, 7%)</span>
+                    readonly aria-live="polite">
+                <span id="ajudaComissaoCalculada" class="app-muted text-[10px]">Calculado automaticamente via faixas (3%, 5%, 7%)</span>
             </div>
-            <div class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
+            <div id="regrasVendedor" class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
                 <p><strong>Regras de Faixa:</strong></p>
-                <p>• 100%+ (&ge; 84 ativ.): <strong>7%</strong></p>
-                <p>• 80%+ (&ge; 67 ativ.): <strong>5%</strong></p>
+                <p>• 100%+: <strong>7%</strong></p>
+                <p>• 80%+: <strong>5%</strong></p>
                 <p>• Abaixo de 80%: <strong>3%</strong></p>
+            </div>
+            <div id="configFuncionario" class="hidden md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="metaFixaFuncionario" class="block text-sm font-semibold">Meta fixa (100%)</label>
+                    <input type="number" id="metaFixaFuncionario" value="240" min="1"
+                        class="app-input mt-1 w-full p-2 border rounded font-bold">
+                </div>
+                <div>
+                    <label for="metaAtingidaFuncionario" class="block text-sm font-semibold">Meta atingida (vendas)</label>
+                    <input type="number" id="metaAtingidaFuncionario" min="0" step="1"
+                        class="app-input mt-1 w-full p-2 border rounded font-bold"
+                        placeholder="Informe a quantidade atingida">
+                    <span class="app-muted text-[10px]">O percentual será calculado automaticamente.</span>
+                </div>
+                <div id="regrasFuncionario" class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
+                    <p><strong>Comissão por venda:</strong></p>
+                    <p>• Até 60% da meta: <strong>R$ 7,00</strong></p>
+                    <p>• Acima de 60% até 80%: <strong>R$ 10,00</strong></p>
+                    <p>• Acima de 80%: <strong>R$ 12,00</strong></p>
+                </div>
             </div>
         </div>
 
-        <div class="mb-6">
-            <label for="nomeVendedor" class="block text-sm font-semibold">Nome do vendedor</label>
-            <input type="text" id="nomeVendedor" name="nomeVendedor" autocomplete="name" required
-                class="app-input mt-1 w-full p-3 border rounded"
-                placeholder="Informe o nome do vendedor">
-            <p class="app-muted mt-1 text-xs">Preencha este campo antes de processar a comissão.</p>
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+            <div>
+                <label for="nomeVendedor" class="block text-sm font-semibold">Nome do vendedor ou funcionário</label>
+                <input type="text" id="nomeVendedor" name="nomeVendedor" autocomplete="name" required
+                    class="app-input mt-1 w-full p-3 border rounded"
+                    placeholder="Informe o nome">
+            </div>
+            <fieldset class="app-rules flex flex-wrap items-center gap-5 p-3 rounded border">
+                <legend class="px-1 text-sm font-semibold">Perfil de comissão</legend>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="perfilComissao" value="vendedor" checked>
+                    <span>Vendedor</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="perfilComissao" value="funcionario">
+                    <span>Funcionário</span>
+                </label>
+            </fieldset>
         </div>
 
         <!-- Área de Upload dos Ficheiros -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
+            <label for="fileVendas" class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
                 <h3 class="text-lg font-semibold mb-2">1. Relatório de Vendas (Doc 01)</h3>
                 <p class="app-muted text-sm mb-4">Anexe o arquivo (PDF, CSV, TXT, XLS ou XLSX)</p>
                 <input type="file" id="fileVendas" accept=".pdf,.csv,.txt,.xls,.xlsx"
                     class="app-file-input text-sm">
-            </div>
+            </label>
 
-            <div class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
+            <label for="fileUpgrades" class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
                 <h3 class="text-lg font-semibold mb-2">2. Relatório de Upgrades (Doc 02)</h3>
                 <p class="app-muted text-sm mb-4">Anexe o arquivo (PDF, CSV, TXT, XLS ou XLSX)</p>
                 <input type="file" id="fileUpgrades" accept=".pdf,.csv,.txt,.xls,.xlsx"
                     class="app-file-input text-sm">
-            </div>
+            </label>
         </div>
 
         <!-- Botão de Processamento -->
@@ -140,9 +172,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- Nova dependência JSZip -->
-
     <!-- Módulos da Aplicação -->
     <script src="js/parsers.js"></script>
     <script src="js/calculator.js"></script>
