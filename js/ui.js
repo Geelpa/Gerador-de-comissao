@@ -27,6 +27,26 @@ function atualizarPainelResumo(dados) {
     }
 }
 
+function definirEstadoBotaoDownload(gerando, mensagem = 'Gerando PDF...') {
+    const botao = document.getElementById('btnDownload');
+    if (!botao) return;
+
+    if (gerando) {
+        if (!botao.dataset.textoOriginal) botao.dataset.textoOriginal = botao.textContent.trim();
+        botao.disabled = true;
+        botao.setAttribute('aria-busy', 'true');
+        botao.textContent = mensagem;
+        return;
+    }
+
+    botao.disabled = false;
+    botao.removeAttribute('aria-busy');
+    if (botao.dataset.textoOriginal) {
+        botao.textContent = botao.dataset.textoOriginal;
+        delete botao.dataset.textoOriginal;
+    }
+}
+
 function mostrarLoading(exibir) {
     let overlay = document.getElementById('loadingOverlay');
     if (!overlay && exibir) {

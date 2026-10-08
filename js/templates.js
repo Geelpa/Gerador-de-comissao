@@ -41,7 +41,7 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
     const quebraPagina = modoImpressao ? 'page-break-before: always; break-before: page;' : '';
 
     return `
-        <div id="conteudoRelatorioPDF" style="font-family: Arial, Helvetica, sans-serif; color: ${cores.texto}; padding: ${modoImpressao ? '10px 18px' : '20px 25px'}; font-size: ${fonteBase}; line-height: 1.3; background: ${cores.fundo}; width: 100%; max-width: ${modoImpressao ? '1098px' : '794px'}; box-sizing: border-box; margin: 0 auto; text-align: left;">
+        <div id="conteudoRelatorioPDF" style="font-family: Arial, Helvetica, sans-serif; color: ${cores.texto}; padding: ${modoImpressao ? '10px 18px' : '20px 25px'}; font-size: ${fonteBase}; line-height: 1.3; background: ${cores.fundo}; width: 100%; max-width: ${modoImpressao ? '1060px' : '794px'}; box-sizing: border-box; margin: 0 auto; text-align: left;">
             <section>
                 <div style="font-size: ${modoImpressao ? '16px' : '13px'}; font-weight: bold; text-align: center; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: 8px; border: 1px solid ${cores.borda};">
                     RELATÓRIO DETALHADO DE VENDAS E ATIVAÇÕES
@@ -64,16 +64,16 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                     <tbody>
                         ${vendas.length ? vendas.map(v => `
                             <tr style="page-break-inside: avoid; break-inside: avoid;">
-                                <td style="padding: 5px 4px; text-align: center; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(v.id || v.codigo || v.id_venda || '-')}</td>
-                                <td style="padding: 5px 4px; text-align: left; border-bottom: 1px solid ${cores.bordaLinha}; word-break: break-word;">${escaparHTML(v.cliente || v.razao_social || v.nome_cliente || 'Não identificado')}</td>
-                                <td style="padding: 5px 4px; text-align: center; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(v.contratoId || v.id_contrato || v.contrato || '-')}</td>
-                                <td style="padding: 5px 4px; text-align: left; border-bottom: 1px solid ${cores.bordaLinha}; word-break: break-word;">${escaparHTML(v.plano || v.nome_plano || v.descricao_contrato || '-')}</td>
-                                <td style="padding: 5px 4px; text-align: center; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(v.dataAtivacao || v.data_ativacao || v.data || '-')}</td>
-                                <td style="padding: 5px 4px; text-align: right; border-bottom: 1px solid ${cores.bordaLinha};">${formatarMoeda(v.valor)}</td>
+                                <td style="padding: 5px 4px; text-align: center;">${escaparHTML(v.id || v.codigo || v.id_venda || '-')}</td>
+                                <td style="padding: 5px 4px; text-align: left; word-break: break-word;">${escaparHTML(v.cliente || v.razao_social || v.nome_cliente || 'Não identificado')}</td>
+                                <td style="padding: 5px 4px; text-align: center;">${escaparHTML(v.contratoId || v.id_contrato || v.contrato || '-')}</td>
+                                <td style="padding: 5px 4px; text-align: left; word-break: break-word;">${escaparHTML(v.plano || v.nome_plano || v.descricao_contrato || '-')}</td>
+                                <td style="padding: 5px 4px; text-align: center;">${escaparHTML(v.dataAtivacao || v.data_ativacao || v.data || '-')}</td>
+                                <td style="padding: 5px 4px; text-align: right;">${formatarMoeda(v.valor)}</td>
                             </tr>
                         `).join('') : `
                             <tr>
-                                <td colspan="6" style="text-align: center; color: ${modoImpressao ? '#000000' : '#9c8e85'}; padding: 10px; border-bottom: 1px solid ${cores.bordaLinha};">
+                                <td colspan="6" style="text-align: center; color: ${modoImpressao ? '#000000' : '#9c8e85'}; padding: 10px;">
                                     Nenhum registro de venda detalhado foi encontrado neste documento.
                                 </td>
                             </tr>
@@ -101,12 +101,12 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                         <tbody>
                             ${upgrades.map(u => `
                                 <tr style="page-break-inside: avoid; break-inside: avoid;">
-                                    <td style="padding: 5px 4px; text-align: center; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(u.contrato || u.id_contrato || '-')}</td>
-                                    <td style="padding: 5px 4px; text-align: center; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(u.data || u.data_alteracao || '-')}</td>
-                                    <td style="padding: 5px 4px; text-align: left; border-bottom: 1px solid ${cores.bordaLinha};">${escaparHTML(u.tipo || u.tipo_alteracao || 'Upgrade')}</td>
-                                    <td style="padding: 5px 4px; text-align: right; border-bottom: 1px solid ${cores.bordaLinha};">${formatarMoeda(u.valorAnterior ?? u.valor_antigo)}</td>
-                                    <td style="padding: 5px 4px; text-align: right; border-bottom: 1px solid ${cores.bordaLinha};">${formatarMoeda(u.valorNovo ?? u.valor_atual)}</td>
-                                    <td style="padding: 5px 4px; text-align: right; border-bottom: 1px solid ${cores.bordaLinha};">${formatarMoeda(u.diferenca)}</td>
+                                    <td style="padding: 5px 4px; text-align: center;">${escaparHTML(u.contrato || u.id_contrato || '-')}</td>
+                                    <td style="padding: 5px 4px; text-align: center;">${escaparHTML(u.data || u.data_alteracao || '-')}</td>
+                                    <td style="padding: 5px 4px; text-align: left;">${escaparHTML(u.tipo || u.tipo_alteracao || 'Upgrade')}</td>
+                                    <td style="padding: 5px 4px; text-align: right;">${formatarMoeda(u.valorAnterior ?? u.valor_antigo)}</td>
+                                    <td style="padding: 5px 4px; text-align: right;">${formatarMoeda(u.valorNovo ?? u.valor_atual)}</td>
+                                    <td style="padding: 5px 4px; text-align: right;">${formatarMoeda(u.diferenca)}</td>
                                 </tr>
                             `).join('')}
                         </tbody>

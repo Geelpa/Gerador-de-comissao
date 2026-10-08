@@ -8,7 +8,7 @@ async function exportarPDF(dadosExportacao) {
     tempContainer.style.position = 'absolute';
     tempContainer.style.top = '0';
     tempContainer.style.left = '-10000px';
-    tempContainer.style.width = '1098px';
+    tempContainer.style.width = '1060px';
     tempContainer.style.backgroundColor = '#ffffff';
     tempContainer.style.zIndex = '-1';
     tempContainer.style.opacity = '1';
@@ -24,11 +24,11 @@ async function exportarPDF(dadosExportacao) {
                         .toLowerCase();
 
     const opcoes = {
-        margin:       [8, 3, 8, 3],
+        margin:       [8, 5, 8, 5],
         filename:     `relatorio_comissao_${nomeBase}.pdf`,
         image:        { type: 'png', quality: 1 },
         html2canvas:  { 
-            scale: 3,
+            scale: 2,
             backgroundColor: '#ffffff',
             useCORS: true, 
             logging: false,
@@ -36,7 +36,7 @@ async function exportarPDF(dadosExportacao) {
             scrollY: 0,
             x: 0,
             y: 0,
-            windowWidth: 1098
+            windowWidth: 1060
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
         pagebreak:    { mode: ['css', 'legacy'] }
@@ -46,9 +46,14 @@ async function exportarPDF(dadosExportacao) {
         // Gera o PDF silenciosamente em segundo plano (Blob)
         const relatorioPDF = tempContainer.querySelector('#conteudoRelatorioPDF');
         if (!relatorioPDF) throw new Error('O conteúdo do relatório PDF não foi encontrado.');
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        await new Promise(resolve => requestAnimationFrame(resolve));
         const pdfBlob = await html2pdf().set(opcoes).from(relatorioPDF).output('blob');
 
         // Empacota o PDF e os anexos em um ZIP
+        if (typeof definirEstadoBotaoDownload === 'function') {
+            definirEstadoBotaoDownload(true, 'Preparando download...');
+        }
         await baixarPacoteZip(dadosExportacao, pdfBlob, `relatorio_comissao_${nomeBase}.pdf`);
     } catch (err) {
         console.error("Erro na geração do PDF:", err);
