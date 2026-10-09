@@ -40,8 +40,8 @@ function baixarArquivo(blob, nomeArquivo) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-async function exportarPDF(dadosExportacao) {
-    if (typeof definirEstadoBotaoDownload === 'function') definirEstadoBotaoDownload(true);
+async function exportarPDF(dadosExportacao, { manageButtonState = true } = {}) {
+    if (manageButtonState && typeof definirEstadoBotaoDownload === 'function') definirEstadoBotaoDownload(true);
 
     // Container Fixo: Impede que o PDF saia descentralizado ou cortado
     const tempContainer = document.createElement('div');
@@ -86,16 +86,17 @@ async function exportarPDF(dadosExportacao) {
         await new Promise(resolve => requestAnimationFrame(resolve));
         const pdfBlob = await html2pdf().set(opcoes).from(relatorioPDF).output('blob');
 
-        if (typeof definirEstadoBotaoDownload === 'function') {
+        if (manageButtonState && typeof definirEstadoBotaoDownload === 'function') {
             definirEstadoBotaoDownload(true, 'Preparando PDF...');
         }
         baixarArquivo(pdfBlob, `${nomeBase}.pdf`);
+        return pdfBlob;
     } catch (err) {
         console.error("Erro na geração do PDF:", err);
-        alert("Erro ao gerar o PDF. Verifique o console para mais detalhes.");
+        throw err;
     } finally {
         if (document.body.contains(tempContainer)) document.body.removeChild(tempContainer);
-        if (typeof definirEstadoBotaoDownload === 'function') definirEstadoBotaoDownload(false);
+        if (manageButtonState && typeof definirEstadoBotaoDownload === 'function') definirEstadoBotaoDownload(false);
     }
 }
 

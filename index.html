@@ -22,67 +22,22 @@
     <div class="app-shell max-w-4xl mx-auto p-8 rounded-lg shadow-lg">
         <h1 class="app-title text-3xl font-bold mb-6 border-b pb-4">Gerador de Comissões</h1>
 
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-            <div>
-                <label for="nomeVendedor" class="block text-sm font-semibold">Nome do vendedor ou funcionário</label>
-                <input type="text" id="nomeVendedor" name="nomeVendedor" autocomplete="name" required
-                    class="app-input mt-1 w-full p-3 border rounded"
-                    placeholder="Informe o nome">
-            </div>
-            <fieldset class="app-rules flex flex-wrap items-center gap-5 p-3 rounded border">
-                <legend class="px-1 text-sm font-semibold">Perfil de comissão</legend>
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="perfilComissao" value="vendedor" checked>
-                    <span>Vendedor</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="perfilComissao" value="funcionario">
-                    <span>Funcionário</span>
-                </label>
-            </fieldset>
-        </div>
-
         <!-- Painel de Configurações da Comissão -->
-        <div class="app-settings p-4 rounded-md mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 border">
-            <div id="metaVendedorConfig">
-                <label for="metaAtivacoes" class="block text-sm font-semibold">Meta de Ativações
-                    (100%)</label>
-                <input type="number" id="metaAtivacoes" min="1" required
-                    class="app-input mt-1 w-full p-2 border rounded font-bold">
-                <span class="app-muted text-[10px]">Informe a meta individual do vendedor.</span>
-            </div>
-            <div>
-                <label for="comissaoPorcentagem" id="labelComissaoCalculada" class="block text-sm font-semibold">Comissão Calculada</label>
-                <input type="text" id="comissaoPorcentagem" value="A definir"
-                    class="app-rate mt-1 w-full p-2 border rounded font-bold"
-                    readonly aria-live="polite">
-                <span id="ajudaComissaoCalculada" class="app-muted text-[10px]">Calculado automaticamente via faixas (3%, 5%, 7%)</span>
-            </div>
-            <div id="regrasVendedor" class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
-                <p><strong>Regras de Faixa:</strong></p>
-                <p>• 100%+: <strong>7%</strong></p>
-                <p>• 80%+: <strong>5%</strong></p>
-                <p>• Abaixo de 80%: <strong>3%</strong></p>
-            </div>
-            <div id="configFuncionario" class="hidden md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="app-settings p-4 rounded-md mb-8 border">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="metaFixaFuncionario" class="block text-sm font-semibold">Meta fixa (100%)</label>
-                    <input type="number" id="metaFixaFuncionario" value="240" min="1"
+                    <label for="metaGeralFuncionario" class="block text-sm font-semibold">Meta geral dos funcionários (100%)</label>
+                    <input type="number" id="metaGeralFuncionario" value="240" min="1"
                         class="app-input mt-1 w-full p-2 border rounded font-bold">
                 </div>
-                <div>
-                    <label for="metaAtingidaFuncionario" class="block text-sm font-semibold">Meta atingida (vendas)</label>
-                    <input type="number" id="metaAtingidaFuncionario" min="0" step="1"
-                        class="app-input mt-1 w-full p-2 border rounded font-bold"
-                        placeholder="Informe a quantidade atingida">
-                    <span class="app-muted text-[10px]">O percentual será calculado automaticamente.</span>
+                <div id="regrasComissao" class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
+                    <p><strong>Vendedores:</strong> 100%+ = 7%, 80%+ = 5%, abaixo de 80% = 3%.</p>
+                    <p><strong>Funcionários:</strong> até 60% = R$ 7, acima de 60% até 80% = R$ 10, acima de 80% = R$ 12 por venda.</p>
                 </div>
-                <div id="regrasFuncionario" class="app-rules flex flex-col justify-center text-xs p-2 rounded border">
-                    <p><strong>Comissão por venda:</strong></p>
-                    <p>• Até 60% da meta: <strong>R$ 7,00</strong></p>
-                    <p>• Acima de 60% até 80%: <strong>R$ 10,00</strong></p>
-                    <p>• Acima de 80%: <strong>R$ 12,00</strong></p>
-                </div>
+            </div>
+            <div id="configuracaoPessoas" class="hidden mt-4">
+                <h2 class="app-title font-semibold mb-2">Metas de ativações dos vendedores</h2>
+                <div id="camposMetasPessoas" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
             </div>
         </div>
 
@@ -110,13 +65,14 @@
         <div class="text-center mb-8">
             <button id="btnProcessar"
                 class="app-button font-bold py-3 px-8 rounded-lg shadow-md transition transform hover:scale-105">
-                Processar e Calcular Comissão
+                Consultar e calcular comissão
             </button>
         </div>
 
         <!-- Resumo dos Resultados na Tela -->
         <div id="areaResultados" class="app-results hidden border-t pt-6">
             <h2 class="app-title text-xl font-bold mb-4">Resumo da Comissão</h2>
+            <p id="contagemPessoasConsultadas" class="app-muted text-sm mb-4" aria-live="polite">Pessoas consultadas: 0</p>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div class="app-result-card app-result-neutral p-4 rounded border">
@@ -138,6 +94,10 @@
             </div>
 
             <div class="app-preview-wrap mb-6 rounded-lg border p-3">
+                <div id="selecaoRelatorioWrap" class="hidden mb-3">
+                    <label for="selecaoRelatorioPessoa" class="block text-sm font-semibold mb-1">Relatório individual</label>
+                    <select id="selecaoRelatorioPessoa" class="app-input w-full md:w-auto p-2 border rounded text-sm"></select>
+                </div>
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <h3 class="app-title font-semibold">Prévia do relatório</h3>
                     <button id="btnExpandirPrevia" type="button" class="app-button-secondary px-4 py-2 rounded font-semibold"
@@ -151,7 +111,7 @@
 
             <!-- Botões de Ação / Exportação -->
             <div class="app-export-panel p-4 rounded border flex flex-wrap items-center justify-between gap-4">
-                <p class="app-muted text-sm">Exporte o relatório detalhado com as informações consultadas.</p>
+                <p class="app-muted text-sm">Exporte o relatório selecionado ou gere todos os PDFs individuais.</p>
                 <div class="flex items-center gap-3">
                     <select id="formatoExportacao"
                         class="app-input p-2 border rounded text-sm">
@@ -162,6 +122,10 @@
                     <button id="btnDownload"
                         class="app-button-secondary py-2 px-6 rounded shadow transition font-semibold">
                         ⬇️ Gerar Documento
+                    </button>
+                    <button id="btnExportarTodos" type="button"
+                        class="app-button-secondary py-2 px-6 rounded shadow transition font-semibold">
+                        Exportar Todos (0)
                     </button>
                 </div>
             </div>

@@ -40,15 +40,22 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
     const fonteBase = modoImpressao ? '13px' : '9.5px';
     const fonteTabela = modoImpressao ? '12px' : '8.5px';
     const alturaLinha = modoImpressao ? '1.15' : '1.3';
+    const nomePessoa = escaparHTML(dadosExportacao.vendedor || '');
+    const tipoPessoa = funcionario ? 'Funcionário' : 'Vendedor';
     const assinaturaHTML = `
-        <div style="margin-top: ${modoImpressao ? '24px' : '55px'}; text-align: center; page-break-inside: avoid; break-inside: avoid;">
+        <div style="margin-top: ${modoImpressao ? '80px' : '55px'}; text-align: center; page-break-inside: avoid; break-inside: avoid;">
             <div style="width: 360px; max-width: 80%; margin: 0 auto; border-top: 1px solid ${cores.borda}; padding-top: 8px; font-size: ${fonteBase};">
-                <strong>Assinatura do Vendedor / Funcionário</strong><br>
+                <strong>Assinatura de ${nomePessoa}</strong><br>
+                <span>${tipoPessoa}</span><br>
                 <span style="font-size: ${modoImpressao ? '14px' : '8.5px'}; color: ${modoImpressao ? '#000000' : '#9c8e85'};">(Termo de Ciência da Comissão)</span>
             </div>
         </div>
     `;
-    const quebraAntesResumo = modoImpressao && upgrades.length >= 12;
+    const resumoComItensReduzidos = modoImpressao && vendas.length < 5 && upgrades.length < 5;
+    const quebraAntesResumo = modoImpressao && upgrades.length >= 12 && !resumoComItensReduzidos;
+    const evitarQuebraResumo = resumoComItensReduzidos
+        ? 'page-break-inside: avoid; break-inside: avoid;'
+        : '';
 
     return `
         <div id="conteudoRelatorioPDF" style="font-family: Arial, Helvetica, sans-serif; color: ${cores.texto}; padding: ${modoImpressao ? '10px 18px' : '20px 25px'}; font-size: ${fonteBase}; line-height: ${alturaLinha}; background: ${cores.fundo}; width: 100%; max-width: ${modoImpressao ? '1060px' : '794px'}; box-sizing: border-box; margin: 0 auto; text-align: left;">
@@ -56,7 +63,7 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                 <div style="font-size: ${modoImpressao ? '15px' : '13px'}; font-weight: bold; text-align: center; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: ${modoImpressao ? '5px' : '8px'}; border: 1px solid ${cores.borda};">
                     RELATÓRIO DETALHADO DE VENDAS E ATIVAÇÕES
                 </div>
-                <p style="margin: ${modoImpressao ? '4px 0' : '8px 0'}; color: ${cores.destaque};"><strong>${funcionario ? 'Funcionário' : 'Vendedor'}:</strong> ${escaparHTML(dadosExportacao.vendedor || '')}</p>
+                <p style="margin: ${modoImpressao ? '4px 0' : '8px 0'}; color: ${cores.destaque};"><strong>${tipoPessoa}:</strong> ${nomePessoa}</p>
                 <div style="font-size: ${modoImpressao ? '14px' : '10.5px'}; text-align: center; margin: ${modoImpressao ? '6px 0 3px' : '12px 0 6px'}; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: ${modoImpressao ? '4px' : '5px'}; border: 1px solid ${cores.borda}; page-break-after: avoid; break-after: avoid;">
                     Vendas e ativações
                 </div>
@@ -122,11 +129,11 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                         </tbody>
                     </table>
                 ` : `
-                    <p style="margin: 12px 0; color: ${cores.texto};">Nenhum upgrade foi identificado neste período.</p>
+                    <p style="margin: 12px 0; color: ${cores.texto};">                    Nenhum upgrade com impacto positivo foi identificado neste período.</p>
                 `}
             </section>
 
-            <section style="${quebraAntesResumo ? 'page-break-before: always; break-before: page;' : ''}">
+            <section style="${quebraAntesResumo ? 'page-break-before: always; break-before: page;' : evitarQuebraResumo}">
                 <div style="font-size: ${modoImpressao ? '14px' : '13px'}; text-align: center; margin: ${modoImpressao ? '8px 0 4px' : '0 0 12px'}; font-weight: bold; text-transform: uppercase; color: ${cores.destaque}; background-color: ${cores.tituloFundo}; padding: ${modoImpressao ? '4px' : '8px'}; border: 1px solid ${cores.borda}; page-break-after: avoid; break-after: avoid;">
                     Resumo e assinatura
                 </div>
@@ -140,6 +147,9 @@ function gerarHTMLRelatorio(dadosExportacao, modoImpressao = false) {
                     <div style="font-size: ${modoImpressao ? '14px' : '10.5px'}; font-weight: bold; color: ${cores.destaque}; margin-bottom: 6px; border-bottom: 1px solid ${cores.borda}; padding-bottom: 4px; text-transform: uppercase;">
                         Resumo da Comissão Apurada
                     </div>
+                    <p style="margin: 4px 0 8px; font-size: ${modoImpressao ? '14px' : '10.5px'};">
+                        <strong>${tipoPessoa} do relatório:</strong> ${nomePessoa}
+                    </p>
                     <table style="width: 100%; font-size: ${fonteBase}; border-collapse: collapse;">
                         <tr>
                             <td style="width: 50%; vertical-align: top;">

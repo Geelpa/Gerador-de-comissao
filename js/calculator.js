@@ -7,7 +7,10 @@ function calcularComissaoTotal({
 }) {
     const totalAtivacoes = dadosVendas.totalAtivacoes;
     const totalValorVendas = dadosVendas.totalValor;
-    const totalUpgradesPositivos = dadosUpgrades.totalDiferenca;
+    const totalUpgradesPositivos = Array.isArray(dadosUpgrades.lista)
+        ? dadosUpgrades.lista.reduce((total, upgrade) =>
+            total + Math.max(0, Number(upgrade.diferenca) || 0), 0)
+        : Math.max(0, Number(dadosUpgrades.totalDiferenca) || 0);
     const funcionario = perfilComissao === 'funcionario';
 
     const quantidadeMetaAtingida = funcionario ? metaAtingidaFuncionario : totalAtivacoes;
