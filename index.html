@@ -90,9 +90,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <label for="fileVendas" class="app-upload border-2 border-dashed p-6 rounded-lg text-center transition">
                 <h3 class="text-lg font-semibold mb-2">1. Relatório de Vendas (Doc 01)</h3>
-                <p class="app-muted text-sm mb-3">Relatório necessário para calcular a comissão.</p>
-                <span class="app-upload-status is-pending mb-4" aria-live="polite">Pendente: anexe o relatório de vendas</span>
-                <input type="file" id="fileVendas" accept=".pdf,.csv,.txt,.xls,.xlsx" required
+                <p class="app-muted text-sm mb-3">Opcional, caso existam vendas no período.</p>
+                <span class="app-upload-status is-pending mb-4" aria-live="polite">Opcional: anexe o relatório de vendas</span>
+                <input type="file" id="fileVendas" accept=".pdf,.csv,.txt,.xls,.xlsx"
                     class="app-file-input text-sm">
             </label>
 
@@ -104,6 +104,7 @@
                     class="app-file-input text-sm">
             </label>
         </div>
+        <p class="app-muted -mt-6 mb-8 text-center text-sm">Anexe ao menos um dos relatórios para consultar e calcular a comissão.</p>
 
         <!-- Botão de Processamento -->
         <div class="text-center mb-8">

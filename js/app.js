@@ -73,9 +73,7 @@ function atualizarEstadoUpload(input) {
     if (statusUpload) {
         const nomeArquivo = arquivoSelecionado
             ? input.files[0].name
-            : input.required
-                ? 'Pendente: anexe o relatório de vendas'
-                : 'Opcional: anexe o relatório de upgrades';
+            : 'Opcional: anexe o relatório de ' + (input.id === 'fileVendas' ? 'vendas' : 'upgrades');
         statusUpload.textContent = arquivoSelecionado ? `Anexado: ${nomeArquivo}` : nomeArquivo;
         statusUpload.classList.toggle('is-selected', arquivoSelecionado);
         statusUpload.classList.toggle('is-pending', !arquivoSelecionado);
@@ -160,18 +158,20 @@ async function processarDocumentos() {
     const arq01 = (inputVendas && inputVendas.files[0]) ? inputVendas.files[0] : arquivosUpload[0];
     const arq02 = (inputUpgrades && inputUpgrades.files[0]) ? inputUpgrades.files[0] : arquivosUpload[1];
 
-    if (!arq01) {
-        alert("Por favor, anexe ao menos o Relatório de Vendas (Doc 01) para calcular a comissão.");
+    if (!arq01 && !arq02) {
+        alert("Por favor, anexe ao menos um dos relatórios (vendas ou upgrades) para consultar e calcular a comissão.");
         return;
     }
 
-    arquivosUpload = [arq01, arq02].filter(Boolean);
+    arquivosUpload = [arq01, arq02];
 
     try {
         if (typeof mostrarLoading === 'function') mostrarLoading(true);
 
         // 1. Extração dos dados via parsers.js
-        const dadosBrutosDoc01 = await extrairDadosDoc01(arq01);
+        const dadosBrutosDoc01 = arq01
+            ? await extrairDadosDoc01(arq01)
+            : { vendedor: '', totalAtivacoes: 0, totalValor: 0, vendas: [], lista: [] };
         const dadosBrutosDoc02 = arq02
             ? await extrairDadosDoc02(arq02)
             : { vendedor: '', totalDiferenca: 0, upgrades: [] };
@@ -229,7 +229,7 @@ async function processarDocumentos() {
 }
 
 function executarExportacao() {
-    if (!estadoApp.vendas || estadoApp.vendas.length === 0) {
+    if (!estadoApp.resumo || !Array.isArray(estadoApp.vendas) || !Array.isArray(estadoApp.upgrades)) {
         alert("Por favor, processe os documentos antes de gerar o arquivo.");
         return;
     }
